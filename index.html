@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepFake Detection Portal</title>
+    <!-- Hover.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css">
+    <!-- Google Fonts (Cyberpunk Style) -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Cyberpunk / Deep Fake Theme */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0a12;
+            #background: linear-gradient(to right, #1e3c72, #2a5298); /* soft blue gradient */
+            color: #00ff41;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Futuristic Background Pattern */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(45deg, #0a0a12 25%, transparent 25%) -50px 0,
+                linear-gradient(-45deg, #0a0a12 25%, transparent 25%) -50px 0,
+                linear-gradient(45deg, transparent 75%, #0a0a12 75%),
+                linear-gradient(-45deg, transparent 75%, #0a0a12 75%);
+            background-size: 100px 100px;
+            z-index: -2;
+            opacity: 0.8;
+        }
+
+        /* Animated Grid Overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        /* Glitch Text Effect */
+        .glitch {
+            position: relative;
+            font-size: 3rem;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            text-align: center;
+            margin: 30px 0;
+            color: #00ff41;
+        }
+
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 2s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00ffff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim-2 2s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(31px, 9999px, 94px, 0); }
+            20% { clip: rect(112px, 9999px, 76px, 0); }
+            40% { clip: rect(75px, 9999px, 107px, 0); }
+            60% { clip: rect(98px, 9999px, 109px, 0); }
+            80% { clip: rect(95px, 9999px, 52px, 0); }
+            100% { clip: rect(31px, 9999px, 113px, 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(65px, 9999px, 119px, 0); }
+            20% { clip: rect(25px, 9999px, 145px, 0); }
+            40% { clip: rect(95px, 9999px, 99px, 0); }
+            60% { clip: rect(118px, 9999px, 132px, 0); }
+            80% { clip: rect(10px, 9999px, 85px, 0); }
+            100% { clip: rect(100px, 9999px, 83px, 0); }
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid #00ff41;
+            background: rgba(10, 10, 18, 0.8);
+            backdrop-filter: blur(5px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-links a {
+            color: #00ff41;
+            text-decoration: none;
+            margin: 0 15px;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #ff00ff;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .login-btn {
+            background: #00ff41;
+            color: #000;
+            padding: 8px 20px;
+            border: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        .login-btn:hover {
+            background: #ff00ff;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.7);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 255, 65, 0.2) 0%, rgba(0, 255, 65, 0) 70%);
+            z-index: -1;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .cta-button {
+            padding: 12px 30px;
+            background: #00ff41;
+            color: #000;
+            border: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                transparent 45%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 55%
+            );
+            transform: rotate(30deg);
+            transition: all 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            background: #ff00ff;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.7);
+        }
+
+        /* Dataset Section */
+        .dataset-section {
+            background: rgba(0, 10, 15, 0.7);
+            padding: 40px;
+            border-radius: 10px;
+            margin: 50px 0;
+            border: 1px solid #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dataset-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255, 0, 255, 0.1) 0%, rgba(255, 0, 255, 0) 70%);
+        }
+
+        .dataset-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, rgba(0, 255, 255, 0) 70%);
+        }
+
+        .dataset-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .dataset-card {
+            background: rgba(10, 15, 20, 0.7);
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #00ff41;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
+        }
+
+        .dataset-card:hover {
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.4);
+            transform: translateY(-5px);
+            border-color: #ff00ff;
+        }
+
+        .dataset-card h3 {
+            color: #ff00ff;
+            font-family: 'Orbitron', sans-serif;
+            margin-top: 0;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .dataset-card ul {
+            padding-left: 20px;
+        }
+
+        .dataset-card li {
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .dataset-card li::before {
+            content: '▹';
+            position: absolute;
+            left: -20px;
+            color: #00ff41;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            border-top: 1px solid #00ff41;
+            margin-top: 50px;
+            background: rgba(10, 10, 18, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .social-links a {
+            color: #00ff41;
+            transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            text-decoration: none;
+            position: relative;
+            padding: 5px 10px;
+        }
+
+        .social-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: #ff00ff;
+            transition: width 0.3s;
+        }
+
+        .social-links a:hover::after {
+            width: 100%;
+        }
+
+        .social-links a:hover {
+            color: #ff00ff;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-links {
+                margin-top: 20px;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .dataset-info {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <h2 class="glitch" data-text="DEEPFAKE DETECT">DEEPFAKE DETECT</h2>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="hvr-underline-from-center">Home</a>
+            <a href="#" class="hvr-underline-from-center">Dataset</a>
+            <a href="#" class="hvr-underline-from-center">Research</a>
+            <a href="#" class="hvr-underline-from-center">About</a>
+            <a href="login.html" class="login-btn hvr-glow">Login</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="hero">
+            <h1>Combat Digital Deception</h1>
+            <p>Advanced deepfake detection using state-of-the-art machine learning models trained on the most comprehensive video dataset available.</p>
+            <div class="cta-buttons">
+                <button class="cta-button hvr-glow">Try Detection</button>
+                <button class="cta-button hvr-glow">Access Dataset</button>
+            </div>
+        </section>
+
+        <section class="dataset-section">
+            <h2 class="glitch" data-text="DATASET">DATASET</h2>
+            <p>This dataset is designed for deepfake detection tasks, providing a comprehensive collection of video sequences that can be used to train and evaluate deep learning models for identifying manipulated media. It was downloaded from the official FaceForensics server, which offers high-quality datasets specifically for the purpose of face manipulation detection.</p>
+
+            <p>The primary inspiration behind this dataset is to address the gap in availability of video-based original datasets for deepfake detection. Most existing datasets focus on image-based manipulations, leaving a critical need for accessible video datasets that can be used for model training and evaluation. This dataset fills that gap, offering a substantial volume of both original and manipulated video content.</p>
+
+            <div class="dataset-info">
+                <div class="dataset-card hvr-float">
+                    <h3>Dataset Features</h3>
+                    <ul>
+                        <li>High-quality video sequences</li>
+                        <li>Both original and manipulated content</li>
+                        <li>Diverse range of subjects</li>
+                        <li>Multiple manipulation techniques</li>
+                        <li>Comprehensive metadata</li>
+                    </ul>
+                </div>
+                <div class="dataset-card hvr-float">
+                    <h3>Use Cases</h3>
+                    <ul>
+                        <li>Training deep learning models to detect deepfake videos</li>
+                        <li>Evaluating the performance of existing deepfake detection algorithms</li>
+                        <li>Benchmarking new detection methods</li>
+                        <li>Research in digital media forensics</li>
+                        <li>Developing real-time detection systems</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="dataset-section">
+            <h2 class="glitch" data-text="TECHNOLOGY">TECHNOLOGY</h2>
+            <div class="dataset-info">
+                <div class="dataset-card hvr-float">
+                    <h3>Detection Methods</h3>
+                    <p>Our platform utilizes advanced neural networks trained on the FaceForensics dataset to identify subtle artifacts left by deepfake generation algorithms. The models analyze both spatial and temporal features in video sequences.</p>
+                </div>
+                <div class="dataset-card hvr-float">
+                    <h3>API Access</h3>
+                    <p>Developers can integrate our detection technology into their applications through our REST API. The service supports batch processing of videos and real-time analysis of video streams.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="social-links">
+            <a href="#" class="hvr-float">GitHub</a>
+            <a href="#" class="hvr-float">Twitter</a>
+            <a href="#" class="hvr-float">LinkedIn</a>
+            <a href="#" class="hvr-float">ResearchGate</a>
+        </div>
+        <p>© 2023 DeepFake Detection Portal. All rights reserved.</p>
+    </footer>
+
+    <!-- Tilt.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+    <script>
+        // Initialize Tilt.js on dataset cards
+        VanillaTilt.init(document.querySelectorAll(".dataset-card"), {
+            max: 5,
+            speed: 300,
+            glare: true,
+            "max-glare": 0.1,
+        });
+    </script>
+</body>
+</html>

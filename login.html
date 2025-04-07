@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Fake Login</title>
+    <!-- Hover.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css">
+    <!-- Google Fonts (Cyberpunk Style) -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Cyberpunk / Deep Fake Theme */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0a0a;
+            color: #00ff41;
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Glitch Text Effect */
+        .glitch {
+            position: relative;
+            font-size: 3rem;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00ff41;
+        }
+
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 2s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00ffff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim-2 2s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(31px, 9999px, 94px, 0); }
+            20% { clip: rect(112px, 9999px, 76px, 0); }
+            40% { clip: rect(75px, 9999px, 107px, 0); }
+            60% { clip: rect(98px, 9999px, 109px, 0); }
+            80% { clip: rect(95px, 9999px, 52px, 0); }
+            100% { clip: rect(31px, 9999px, 113px, 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(65px, 9999px, 119px, 0); }
+            20% { clip: rect(25px, 9999px, 145px, 0); }
+            40% { clip: rect(95px, 9999px, 99px, 0); }
+            60% { clip: rect(118px, 9999px, 132px, 0); }
+            80% { clip: rect(10px, 9999px, 85px, 0); }
+            100% { clip: rect(100px, 9999px, 83px, 0); }
+        }
+
+        /* Login Container */
+        .login-container {
+            background: rgba(10, 10, 10, 0.8);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+            width: 300px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            border: 1px solid #00ff41;
+            transform-style: preserve-3d;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #00ff41;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            border-bottom-color: #ff00ff;
+        }
+
+        button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: #ff00ff;
+            color: #fff;
+        }
+
+        .footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .footer a {
+            color: #00ff41;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .footer a:hover {
+            color: #ff00ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container" data-tilt>
+        <h1 class="glitch" data-text="DEEP FAKE">DEEP FAKE</h1>
+        <form class="login-form">
+            <div class="form-group hvr-underline-from-center">
+                <input type="text" placeholder="Username" required>
+            </div>
+            <div class="form-group hvr-underline-from-center">
+                <input type="password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="hvr-glow">LOGIN</button>
+        </form>
+        <div class="footer">
+            <a href="#" class="hvr-float">Forgot Password?</a>
+            <a href="#" class="hvr-float">Create Account</a>
+        </div>
+    </div>
+
+    <!-- Tilt.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+    <script>
+        // Initialize Tilt.js
+        VanillaTilt.init(document.querySelector(".login-container"), {
+            max: 15,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.2,
+        });
+    </script>
+</body>
+</html>
